@@ -30,15 +30,15 @@ pdf_target = '/press/key/date/2018/html/ecb.sp180129.en.html'
 # Scroll e busca
 step = 1
 while True:
-    print(f"🔽 Scroll step {step}")
+    print(f"Scroll step {step}")
     
     # Captura o HTML da página
     html = driver.page_source
 
     # Verifica se contém o PDF alvo
     if pdf_target in html:
-        print(f"✅ Encontrado! Parando no passo {step}")
-        with open("ecb_final_page.html", "w", encoding="utf-8") as f:
+        print(f"Encontrado! Parando no passo {step}")
+        with open("data/ecb_final_page.html", "w", encoding="utf-8") as f:
             f.write(html)
         break
 
@@ -47,4 +47,4 @@ while True:
     time.sleep(2)
     step += 1
 
-print("🏁 Processo finalizado.")
+print("Processo finalizado.")

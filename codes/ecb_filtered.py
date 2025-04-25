@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 
 # Ler o HTML
-with open("ecb_final_page.html", "r", encoding="utf-8") as f:
+with open("data/ecb_final_page.html", "r", encoding="utf-8") as f:
     html = f.read()
 
 soup = BeautifulSoup(html, "lxml")
@@ -54,6 +54,6 @@ df = pd.DataFrame(data)
 df.index.name = "ID"
 
 # Salvar CSV
-df.to_csv("ecb_speeches_filtered.csv", index=True)
+df.to_csv("data/ecb_speeches_filtered.csv", index=True)
 
-print("DataFrame salvo em 'ecb_speeches_filtered.csv'")
+print("DataFrame salvo em 'data/ecb_speeches_filtered.csv'")
