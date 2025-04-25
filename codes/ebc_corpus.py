@@ -44,14 +44,14 @@ for _, row in tqdm(df.iterrows(), total=len(df)):
         texts.append(full_speech_text)
 
     except Exception as e:
-        print(f"⚠️ Erro com URL: {url}\n→ {e}")
+        print(f"Erro com URL: {url}\n→ {e}")
         texts.append("")
 
 # Adiciona ao DataFrame e salva
 df["TEXT"] = texts
 missing = df["TEXT"].isna() | df["TEXT"].str.strip().eq("")
     
-print(f"🔍 Entradas com TEXT ausente ou vazio: {missing.sum()}")
+print(f"Entradas com TEXT ausente ou vazio: {missing.sum()}")
 
 # Mostrar as linhas (opcional)
 df[~missing].to_csv("ecb_speech_corpus_clean.csv", index=False)

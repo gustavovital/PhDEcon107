@@ -56,4 +56,4 @@ df.index.name = "ID"
 # Salvar CSV
 df.to_csv("ecb_speeches_filtered.csv", index=True)
 
-print("✅ DataFrame salvo em 'ecb_speeches_filtered.csv'")
+print("DataFrame salvo em 'ecb_speeches_filtered.csv'")
