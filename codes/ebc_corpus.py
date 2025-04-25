@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 # Carrega a base original
-df = pd.read_csv("ecb_speeches_filtered.csv")
+df = pd.read_csv("data/ecb_speeches_filtered.csv")
 
 # Lista para armazenar os textos
 texts = []
@@ -54,4 +54,4 @@ missing = df["TEXT"].isna() | df["TEXT"].str.strip().eq("")
 print(f"Entradas com TEXT ausente ou vazio: {missing.sum()}")
 
 # Mostrar as linhas (opcional)
-df[~missing].to_csv("ecb_speech_corpus_clean.csv", index=False)
+df[~missing].to_csv("data/ecb_speech_corpus_clean.csv", index=False)

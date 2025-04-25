@@ -5,7 +5,7 @@ from tqdm import tqdm
 import numpy as np
 
 # Load full dataset
-df = pd.read_csv("ecb_speech_corpus_clean.csv")
+df = pd.read_csv("data/ecb_speech_corpus_clean.csv")
 df['DATE'] = pd.to_datetime(df['DATE'])
 
 # Define sentiment models
