@@ -16,7 +16,7 @@ sentiment_scored_aggregated <- read.csv("~/Documents/GitHub/PhDEcon107/data/sent
 
 sentiment_scored_aggregated$DATE <- as.Date(sentiment_scored_aggregated$DATE)
 
-# Agrupar e calcular sentimentos ponderados
+# wrangling
 data <- sentiment_scored_aggregated %>%
   mutate(DATE = floor_date(DATE, unit = "month")) %>%
   group_by(DATE) %>%
@@ -65,16 +65,18 @@ plot(data2$norm_mean_sentiment_4, type = 'l')
 
 data2$icc_diff <- c(NA, diff(data2$ICC))
 
-lm_model <- lm(ICC ~ norm_mean_sentiment_4, data = data2, na.action = na.exclude)
-summary(lm_model)
+lm_model <- lm(ICC ~ norm_finbert_5, data = data2, na.action = na.exclude)
+lm_model <- lm(ICC ~ norm_mean_sentiment_5, data = data2, na.action = na.exclude)
+lm_model <- lm(ICC ~ norm_yiyanghkust_5, data = data2, na.action = na.exclude)
+# summary(lm_model)
 
 ms_model <- msmFit(lm_model,
                    k = 2,
                    p = 0,
-                   sw = c( TRUE, TRUE, TRUE),
+                   sw = c(TRUE, TRUE, TRUE),
                    control = list(parallel = FALSE, trace = TRUE))
 
 summary(ms_model)
 # plot(resid(ms_model@model), type='l')
 
-plotProb(ms_model, which = c(3))
+plotProb(ms_model, which = 2)
