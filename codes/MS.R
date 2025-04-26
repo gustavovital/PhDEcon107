@@ -79,4 +79,4 @@ ms_model <- msmFit(lm_model,
 summary(ms_model)
 # plot(resid(ms_model@model), type='l')
 
-plotProb(ms_model, which = 2)
+plotProb(ms_model, which = 3)
