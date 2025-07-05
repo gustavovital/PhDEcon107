@@ -61,23 +61,11 @@ data2 <- data %>%
   mutate(covid = ifelse(DATE < as.Date('2021-07-01') & DATE > as.Date('2020-03-01'), 1, 0)) %>% 
   na.omit() 
 
-plot(data2$ICC, type = 'l')
-plot(data2$norm_mean_sentiment_4, type = 'l')
+# plot(data2$ICC, type = 'l')
+# plot(data2$norm_mean_sentiment_4, type = 'l')
 
 data2$icc_diff <- c(NA, diff(data2$ICC))
 
-# lm_model <- lm(ICC ~ norm_finbert_2, data = data2, na.action = na.exclude)
-# lm_model <- lm(ICC ~ norm_yiyanghkust_5, data = data2, na.action = na.exclude)
-# lm_model <- lm(ICC ~ norm_mean_sentiment_4, data = data2, na.action = na.exclude)
-# # summary(lm_model)
-# 
-# ms_model <- msmFit(lm_model,
-#                    k = 2,
-#                    p = 0,
-#                    sw = c(TRUE, TRUE, TRUE),
-#                    control = list(parallel = FALSE, trace = TRUE))
-# 
-# summary(ms_model)
-# # plot(resid(ms_model@model), type='l')
-# 
-# plotProb(ms_model, which = 3)
+saveRDS(data, '~/Documents/GitHub/PhDEcon107/data/data.rds')
+
+rm(list = ls())
