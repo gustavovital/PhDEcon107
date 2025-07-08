@@ -67,5 +67,6 @@ data2 <- data %>%
 data2$icc_diff <- c(NA, diff(data2$ICC))
 
 saveRDS(data, '~/Documents/GitHub/PhDEcon107/data/data.rds')
+saveRDS(data2, '~/Documents/GitHub/PhDEcon107/data/data2.rds')
 
 rm(list = ls())

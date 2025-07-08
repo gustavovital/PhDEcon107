@@ -1,5 +1,5 @@
 # Define variáveis e rolling_means
-data <- readRDS("~/Documents/GitHub/PhDEcon107/data/data.rds")
+data <- readRDS("~/Documents/GitHub/PhDEcon107/data/data2.rds")
 
 sentiment_vars <- c("norm_finbert", "norm_yiyanghkust", "norm_mean_sentiment")
 rolling_means <- 2:6
@@ -26,7 +26,9 @@ for (sentiment_var in sentiment_vars) {
       message(paste("Error p=0 in:", model_name))
       return(NULL)
     })
-    
+    print(paste('Formula: ', formula_model))
+    print('============= MODEL P0 ================')
+    print(ms_model_p0)
     # MSM com p = 1
     ms_model_p1 <- tryCatch({
       msmFit(lm_model, k = 2, p = 1, sw = c(TRUE, TRUE, TRUE, TRUE),
@@ -35,13 +37,13 @@ for (sentiment_var in sentiment_vars) {
       message(paste("Error p=1 in:", model_name))
       return(NULL)
     })
+    print('============= MODEL P1 ================')
+    print(ms_model_p1)
     
     models_list[[model_name]] <- ms_model_p0
     models_list_p1[[model_name]] <- ms_model_p1
   }
 }
-
-
 
 
 # Export to Latex (NOT USED) ====
