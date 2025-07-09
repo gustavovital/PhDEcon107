@@ -81,7 +81,10 @@ cor(data$weighted_sentiment_yiyanghkust_4, data$weighted_sentiment_finbert_4)
 cor(data$weighted_sentiment_yiyanghkust_5, data$weighted_sentiment_finbert_5)
 cor(data$weighted_sentiment_yiyanghkust_6, data$weighted_sentiment_finbert_6)
 
-# Unit Root test ====
-summary(ur.df(data$weighted_sentiment_yiyanghkust_2))
+plotProb(models_list[["norm_finbert_lag_4"]], which = 1)
+plotProb(models_list[["norm_finbert_lag_4"]], which = 2)
 
-plot(data$weighted_sentiment_finbert, type='l')
+plotProb(models_list[["norm_yiyanghkust_lag_3"]], which = 1)
+plotProb(models_list[["norm_yiyanghkust_lag_3"]], which = 2)
+
+
