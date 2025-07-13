@@ -4,7 +4,7 @@
 source('wrangling.R')
 
 # Stats ====
-
+source('stats.R')
 
 # Estimate Models ====
 source('MSM.R')
