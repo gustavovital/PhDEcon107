@@ -38,7 +38,7 @@ while True:
     # Verifica se contém o PDF alvo
     if pdf_target in html:
         print(f"Encontrado! Parando no passo {step}")
-        with open("data/ecb_final_page.html", "w", encoding="utf-8") as f:
+        with open("data/ecb_final_page_2.html", "w", encoding="utf-8") as f:
             f.write(html)
         break
 
