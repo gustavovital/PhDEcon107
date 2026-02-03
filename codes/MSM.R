@@ -1,7 +1,7 @@
 # Define variáveis e rolling_means
-data <- readRDS("~/Documents/GitHub/PhDEcon107/data/data2.rds")
+data <- readRDS("C:/Users/gusta/Documents/GitHub/PhDEcon107/data/sent_all.rds")
 
-sentiment_vars <- c("norm_finbert", "norm_yiyanghkust", "norm_mean_sentiment")
+sentiment_vars <- c("norm_finbert", "norm_yiyanghkust", "norm_lm_sentiment")
 rolling_means <- 2:6
 
 models_list <- list()
@@ -44,6 +44,7 @@ for (sentiment_var in sentiment_vars) {
     models_list_p1[[model_name]] <- ms_model_p1
   }
 }
+
 
 
 # Export to Latex (NOT USED) ====
