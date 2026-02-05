@@ -8,17 +8,33 @@ library(zoo)
 library(xtable)
 
 setwd("~/Documents/GitHub/PhDEcon107/codes/")
+sentiment_scored_aggregated_full <- read_csv("~/GitHub/PhDEcon107/sentiment_scored_aggregated_full.csv")
+sentiment_scored_aggregated <- read.csv("~/Documents/GitHub/PhDEcon107/data/sentiment_scored_aggregated.csv")
+
+missing_2021_dates <- sentiment_scored_aggregated %>%
+  filter(format(DATE, "%Y") == "2021") %>%
+  anti_join(
+    sentiment_scored_aggregated_full,
+    by = "DATE"
+  )
+
+sentiment_scored_aggregated_full_teste <- bind_rows(
+  sentiment_scored_aggregated_full,
+  missing_2021_dates
+) %>%
+  arrange(DATE)
+
 
 icc <- read.csv2("~/Documents/GitHub/PhDEcon107/data/icc.csv")
+names(icc)<- c('DATE', 'icc')
+
 icc <- icc %>%
   mutate(DATE = floor_date(as.Date(DATE), unit = "month"))
-
-sentiment_scored_aggregated <- read.csv("~/Documents/GitHub/PhDEcon107/data/sentiment_scored_aggregated.csv")
 
 sentiment_scored_aggregated$DATE <- as.Date(sentiment_scored_aggregated$DATE)
 
 # wrangling
-data <- sentiment_scored_aggregated %>%
+data <- sentiment_scored_aggregated_full_teste %>%
   mutate(DATE = floor_date(DATE, unit = "month")) %>%
   group_by(DATE) %>%
   summarise(
@@ -57,16 +73,21 @@ for (i in 2:6) {
 }
 
 data2 <- data %>%
-  filter(DATE < as.Date('2025-01-01') & DATE >= as.Date('2020-01-01')) %>% 
+  # filter(DATE < as.Date('2025-01-01') & DATE >= as.Date('2020-01-01')) %>% 
   mutate(covid = ifelse(DATE < as.Date('2021-07-01') & DATE > as.Date('2020-03-01'), 1, 0)) %>% 
   na.omit() 
 
-# plot(data2$ICC, type = 'l')
-# plot(data2$norm_mean_sentiment_4, type = 'l')
+data2 <- data2 %>% 
+  mutate(
+    icc = as.numeric(sub(",", ".", icc, fixed = TRUE))
+  )
 
-data2$icc_diff <- c(NA, diff(data2$ICC))
+plot(data2$icc, type = 'l')
+plot(data2$norm_mean_sentiment_4, type = 'l')
 
-saveRDS(data, '~/Documents/GitHub/PhDEcon107/data/data.rds')
-saveRDS(data2, '~/Documents/GitHub/PhDEcon107/data/data2.rds')
+data2$icc_diff <- c(NA, diff(data2$icc))
+
+saveRDS(data, 'C:/Users/gusta/Documents/GitHub/PhDEcon107/data/data_new.rds')
+saveRDS(data2, 'C:/Users/gusta/Documents/GitHub/PhDEcon107/data/data2_new.rds')
 
 rm(list = ls())
