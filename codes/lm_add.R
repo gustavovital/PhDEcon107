@@ -5,7 +5,7 @@ library(ggplot2)
 
 # get corpus clean
 ecb_speech_corpus_clean <- read_csv("~/GitHub/PhDEcon107/data/ecb_speech_corpus_clean.csv")
-
+names(ecb_speech_corpus_clean)[1] <- 'ID'
 # get LM 
 lm_dict <- get_sentiments("loughran")
 
@@ -90,8 +90,6 @@ for (i in 2:6) {
 
 
 lm_monthly2 <- lm_monthly %>%
-  filter(DATE < as.Date("2025-01-01"),
-         DATE >= as.Date("2020-01-01")) %>%
   mutate(
     covid = ifelse(DATE < as.Date("2021-07-01") &
                      DATE > as.Date("2020-03-01"), 1, 0)
@@ -99,19 +97,50 @@ lm_monthly2 <- lm_monthly %>%
   na.omit()
 
 ## join df ####
-data2 <- readRDS("C:/Users/gusta/Documents/GitHub/PhDEcon107/data/data2.rds")
+data2 <- readRDS("C:/Users/gusta/Documents/GitHub/PhDEcon107/data/data2_new.rds")
 
 sent_all <- data2 %>%
   left_join(lm_monthly2, by = "DATE")
 
+
+sent_all_old <- readRDS("~/GitHub/PhDEcon107/data/sent_all.rds")
+
+sent_all_old <- sent_all_old %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  mutate(DATE = floor_date(DATE, "month"))
+
+sent_all <- sent_all %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  mutate(DATE = floor_date(DATE, "month"))
+
+sent_all     <- sent_all     %>% mutate(DATE = as.Date(DATE), DATE = floor_date(DATE, "month"))
+sent_all_old <- sent_all_old %>% mutate(DATE = as.Date(DATE), DATE = floor_date(DATE, "month"))
+
+lm_cols <- names(sent_all) %>%
+  grep("^(weighted_lm_|norm_lm_|lm_)", ., value = TRUE)
+
+sent_all_new <- sent_all %>%
+  left_join(
+    sent_all_old %>% select(DATE, all_of(lm_cols)),
+    by = "DATE",
+    suffix = c("", "_old")
+  ) %>%
+  mutate(across(
+    all_of(lm_cols),
+    ~ if_else(year(DATE) == 2021, get(paste0(cur_column(), "_old")), .)
+  )) %>%
+  select(-ends_with("_old")) %>%
+  arrange(DATE)
+
+
 # save ####
 saveRDS(
-  sent_all,
-  "C:/Users/gusta/Documents/GitHub/PhDEcon107/data/sent_all.rds"
+  sent_all_new,
+  "C:/Users/gusta/Documents/GitHub/PhDEcon107/data/sent_all_new.rds"
 )
 
 ## Comparison ####
-sent_comp <- sent_all %>%
+sent_comp <- sent_all_new %>%
   dplyr::select(
     DATE,
     matches("^norm_(finbert|yiyanghkust|lm_sentiment)$"),
