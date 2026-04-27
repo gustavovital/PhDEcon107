@@ -1,59 +1,72 @@
-from bs4 import BeautifulSoup
+import glob
 import pandas as pd
 from datetime import datetime
+from lxml import html as lxml_html
 
-# Ler o HTML
-with open("data/ecb_final_page.html", "r", encoding="utf-8") as f:
-    html = f.read()
+all_rows = []
 
-soup = BeautifulSoup(html, "lxml")
+html_files = sorted(glob.glob("data/ecb_final_page_*.html"))
 
-blocks = soup.find_all("dl")
+for html_path in html_files:
+    year = int(html_path.split("_")[-1].replace(".html", ""))
+    print(f"Processing year {year}")
 
-data = []
+    with open(html_path, "r", encoding="utf-8") as f:
+        page = f.read()
 
-for block in blocks:
-    children = block.find_all(["dt", "dd"], recursive=False)
+    doc = lxml_html.fromstring(page)
 
-    for i in range(0, len(children) - 1, 2):
-        dt = children[i]
-        dd = children[i + 1]
+    # Cada item está em <dl> com pares <dt> (data) e <dd> (conteúdo)
+    dls = doc.xpath("//dl")
+    for dl in dls:
+        dts = dl.xpath("./dt")
+        dds = dl.xpath("./dd")
+        n = min(len(dts), len(dds))
 
-        # Data como string
-        date_str = dt.get_text(strip=True)
+        for i in range(n):
+            date_str = "".join(dts[i].itertext()).strip()
+            try:
+                date_obj = datetime.strptime(date_str, "%d %B %Y").date()
+            except ValueError:
+                continue
 
-        # Converter para datetime.date
-        try:
-            date_obj = datetime.strptime(date_str, "%d %B %Y").date()
-        except ValueError:
-            continue
+            # Título + link (evita PDF)
+            a = dds[i].xpath('.//div[contains(@class,"title")]//a[1]')
+            if not a:
+                continue
+            href = a[0].get("href", "").strip()
+            if not href or href.endswith(".pdf"):
+                continue
+            title = "".join(a[0].itertext()).strip()
+            link = "https://www.ecb.europa.eu" + href
 
-        # Título e link
-        a_tag = dd.select_one("div.title a")
-        if not a_tag or a_tag["href"].endswith(".pdf"):
-            continue
+            # Autores (se não houver, "—")
+            author_nodes = dds[i].xpath('.//div[contains(@class,"authors")]//li')
+            authors = [("".join(x.itertext()).strip()) for x in author_nodes]
+            authors_text = ", ".join([x for x in authors if x]) if authors else "—"
 
-        title = a_tag.get_text(strip=True)
-        link = "https://www.ecb.europa.eu" + a_tag["href"]
+            all_rows.append({
+                "YEAR": year,
+                "DATE": date_obj,
+                "AUTHOR": authors_text,
+                "TITLE": title,
+                "LINK": link
+            })
 
-        # Autores
-        author_tags = dd.select("div.authors li")
-        authors = [li.get_text(strip=True) for li in author_tags] if author_tags else ["—"]
-        authors_text = ", ".join(authors)
-
-        # Adiciona ao dataset
-        data.append({
-            "DATE": date_obj,
-            "AUTHOR": authors_text,
-            "TITLE": title,
-            "LINK": link
-        })
-
-# Criar DataFrame
-df = pd.DataFrame(data)
+df = pd.DataFrame(all_rows)
 df.index.name = "ID"
+# df.head()
+# df.tail()
 
-# Salvar CSV
-df.to_csv("data/ecb_speeches_filtered.csv", index=True)
+df = df.drop_duplicates(subset="LINK", keep="first")
 
-print("DataFrame salvo em 'data/ecb_speeches_filtered.csv'")
+df["DATE"] = pd.to_datetime(df["DATE"], errors="coerce", dayfirst=True)
+df = df.sort_values("DATE").reset_index(drop=True)
+
+df = df[
+    (df["DATE"] >= pd.Timestamp("2005-01-01")) &
+    (df["DATE"] <  pd.Timestamp("2026-01-01"))
+].reset_index(drop=True)
+
+df.to_csv("data/ecb_speeches_filtered_raw.csv", index=True)
+print("Saved: data/ecb_speeches_filtered_raw.csv")

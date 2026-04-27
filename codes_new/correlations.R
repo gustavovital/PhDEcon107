@@ -1,0 +1,43 @@
+# calculate correlations
+
+# cor(data$weighted_sentiment_finbert_std, data$icc)
+cor(data$weighted_sentiment_finbert_2_std, data$icc)
+cor(data$weighted_sentiment_finbert_3_std, data$icc)
+cor(data$weighted_sentiment_finbert_4_std, data$icc)
+cor(data$weighted_sentiment_finbert_5_std, data$icc)
+cor(data$weighted_sentiment_finbert_6_std, data$icc)
+
+# cor(data$weighted_sentiment_yiyanghkust_std  , data$icc)
+cor(data$weighted_sentiment_yiyanghkust_2_std, data$icc)
+cor(data$weighted_sentiment_yiyanghkust_3_std, data$icc)
+cor(data$weighted_sentiment_yiyanghkust_4_std, data$icc)
+cor(data$weighted_sentiment_yiyanghkust_5_std, data$icc)
+cor(data$weighted_sentiment_yiyanghkust_6_std, data$icc)
+
+# cor(data$weighted_lm_sentiment_std  , data$icc)
+cor(data$weighted_lm_sentiment_2_std, data$icc)
+cor(data$weighted_lm_sentiment_3_std, data$icc)
+cor(data$weighted_lm_sentiment_4_std, data$icc)
+cor(data$weighted_lm_sentiment_5_std, data$icc)
+cor(data$weighted_lm_sentiment_6_std, data$icc)
+
+# cor(data$weighted_sentiment_finbert_std,   data$weighted_sentiment_yiyanghkust_std  )
+cor(data$weighted_sentiment_finbert_2_std, data$weighted_sentiment_yiyanghkust_2_std)
+cor(data$weighted_sentiment_finbert_3_std, data$weighted_sentiment_yiyanghkust_3_std)
+cor(data$weighted_sentiment_finbert_4_std, data$weighted_sentiment_yiyanghkust_4_std)
+cor(data$weighted_sentiment_finbert_5_std, data$weighted_sentiment_yiyanghkust_5_std)
+cor(data$weighted_sentiment_finbert_6_std, data$weighted_sentiment_yiyanghkust_6_std)
+
+# cor(data$weighted_sentiment_finbert_std  ,   data$weighted_lm_sentiment_std)
+cor(data$weighted_sentiment_finbert_2_std, data$weighted_lm_sentiment_2_std)
+cor(data$weighted_sentiment_finbert_3_std, data$weighted_lm_sentiment_3_std)
+cor(data$weighted_sentiment_finbert_4_std, data$weighted_lm_sentiment_4_std)
+cor(data$weighted_sentiment_finbert_5_std, data$weighted_lm_sentiment_5_std)
+cor(data$weighted_sentiment_finbert_6_std, data$weighted_lm_sentiment_6_std) 
+
+# cor(data$weighted_sentiment_yiyanghkust_std  ,   data$weighted_lm_sentiment_std)
+cor(data$weighted_sentiment_yiyanghkust_2_std, data$weighted_lm_sentiment_2_std)
+cor(data$weighted_sentiment_yiyanghkust_3_std, data$weighted_lm_sentiment_3_std)
+cor(data$weighted_sentiment_yiyanghkust_4_std, data$weighted_lm_sentiment_4_std)
+cor(data$weighted_sentiment_yiyanghkust_5_std, data$weighted_lm_sentiment_5_std)
+cor(data$weighted_sentiment_yiyanghkust_6_std, data$weighted_lm_sentiment_6_std)

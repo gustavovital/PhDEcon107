@@ -60,7 +60,7 @@ ciss <- ciss %>%
 
 EPU <- EPU %>%
   filter(DATE < as.Date('2026-01-01')& DATE >= as.Date('2010-01-01'))
-  
+
 # Testing correlion ====
 # model_name <- "norm_yiyanghkust_lag_4" # smaller AIC BIC
 # ms <- models_list[[model_name]]
@@ -184,7 +184,7 @@ validate_regime <- function(ms_model, data, icc_var = "icc",
   
   cat("\nTeste de diferença de médias (VSTOXX):\n")
   print(t.test(vstoxx$vstoxx ~ data$crisis_dummy))
-
+  
   cat("\nTeste de diferença de médias (EPU):\n")
   print(t.test(EPU$EPU ~ data$crisis_dummy))
   
@@ -197,13 +197,13 @@ validate_regime <- function(ms_model, data, icc_var = "icc",
   # 
   cat("\nRegressão auxiliar VSTOXX:\n")
   print(summary(lm(vstoxx$vstoxx ~ data$prob_crisis)))
-
+  
   cat("\nRegressão auxiliar EPU:\n")
   print(summary(lm(EPU$EPU ~ data$prob_crisis)))
-
+  
   cat("\nRegressão auxiliar CISS:\n")
   print(summary(lm(ciss$CISS_m ~ data$prob_crisis)))
-
+  
   # return(invisible(data))
 }
 

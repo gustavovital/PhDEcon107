@@ -6,6 +6,7 @@ library(ggplot2)
 # get corpus clean
 ecb_speech_corpus_clean <- read_csv("~/GitHub/PhDEcon107/data/ecb_speech_corpus_clean.csv")
 names(ecb_speech_corpus_clean)[1] <- 'ID'
+ecb_speech_corpus_clean <- ecb_speech_corpus_clean[, -ncol(ecb_speech_corpus_clean)]
 # get LM 
 lm_dict <- get_sentiments("loughran")
 
@@ -99,7 +100,7 @@ lm_monthly2 <- lm_monthly %>%
 ## join df ####
 data2 <- readRDS("C:/Users/gusta/Documents/GitHub/PhDEcon107/data/data2_new.rds")
 
-sent_all <- data2 %>%
+sent_all <- data2_new %>%
   left_join(lm_monthly2, by = "DATE")
 
 

@@ -20,7 +20,7 @@ print_ll_aic_bic <- function(data,
     for (lag in rolling_means) {
       
       var  <- paste0(sent_var, "_", lag)
-      form <- as.formula(paste0("ICC ~ ", var))
+      form <- as.formula(paste0("icc ~ ", var))
       
       # -----------------------
       # k = 1 (linear)

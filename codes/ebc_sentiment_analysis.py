@@ -71,8 +71,8 @@ monthly_sentiment = (
 df_no_text = df.drop(columns=["TEXT"])
 
 # Save results (optional)
-df_no_text.to_csv("sentiment_scored_aggregated.csv", index=False)
-monthly_sentiment.to_csv("monthly_sentiment.csv", index=False)
+df_no_text.to_csv("sentiment_scored_aggregated_full.csv", index=False)
+monthly_sentiment.to_csv("monthly_sentiment_full.csv", index=False)
 
 # Output to screen
 print("Monthly sentiment:")

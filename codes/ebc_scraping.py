@@ -3,48 +3,80 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 import time
+import os
 
+# =========================
 # Setup do Selenium
+# =========================
 options = Options()
 # options.add_argument("--headless")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
+
 driver = webdriver.Chrome(service=Service(), options=options)
 
-# Abre a página
-url = 'https://www.ecb.europa.eu/press/pubbydate/html/index.en.html?'
-driver.get(url)
-time.sleep(3)
+os.makedirs("data", exist_ok=True)
 
-# Aceita cookies se necessário
-try:
-    accept_button = driver.find_element(By.CSS_SELECTOR, 'a.check.linkButtonLarge.floatLeft.highlight-medium')
-    accept_button.click()
-    time.sleep(2)
-except:
-    pass
+# =========================
+# Loop por ano
+# =========================
+for year in range(2005, 2026):
 
-# PDF que estamos procurando
-pdf_target = '/press/key/date/2018/html/ecb.sp180129.en.html'
+    print(f"\n=== Processing year {year} ===")
 
-# Scroll e busca
-step = 1
-while True:
-    print(f"Scroll step {step}")
-    
-    # Captura o HTML da página
-    html = driver.page_source
+    url = f"https://www.ecb.europa.eu/press/pubbydate/html/index.en.html?year={year}"
+    driver.get(url)
+    time.sleep(3)
 
-    # Verifica se contém o PDF alvo
-    if pdf_target in html:
-        print(f"Encontrado! Parando no passo {step}")
-        with open("data/ecb_final_page_2.html", "w", encoding="utf-8") as f:
-            f.write(html)
-        break
+    # Aceita cookies se necessário
+    try:
+        accept_button = driver.find_element(
+            By.CSS_SELECTOR,
+            'a.check.linkButtonLarge.floatLeft.highlight-medium'
+        )
+        accept_button.click()
+        time.sleep(2)
+    except:
+        pass
 
-    # Scroll e continua
-    driver.execute_script("window.scrollBy(0, 400);")
-    time.sleep(2)
-    step += 1
+    step = 1
+    last_count = 0
+    stagnant_steps = 0
+    MAX_STAGNANT = 20   # número de scrolls sem crescimento antes de parar
 
-print("Processo finalizado.")
+    while True:
+        print(f"Year {year} | Scroll step {step}")
+
+        # Conta links carregados
+        links = driver.find_elements(By.CSS_SELECTOR, "a")
+        current_count = len(links)
+
+        if current_count > last_count:
+            last_count = current_count
+            stagnant_steps = 0
+        else:
+            stagnant_steps += 1
+            print(f"No new content ({stagnant_steps}/{MAX_STAGNANT})")
+
+        # Scroll (NÃO ALTERADO)
+        driver.execute_script("window.scrollBy(0, 400);")
+        time.sleep(1)
+
+        if stagnant_steps >= MAX_STAGNANT:
+            print(f"All content loaded for year {year}")
+
+            html = driver.page_source
+            output_file = f"data/ecb_final_page_{year}.html"
+            with open(output_file, "w", encoding="utf-8") as f:
+                f.write(html)
+
+            print(f"Saved: {output_file}")
+            break
+
+        step += 1
+
+# =========================
+# Finaliza
+# =========================
+driver.quit()
+print("\nProcesso finalizado.")
