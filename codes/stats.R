@@ -2,7 +2,7 @@
 library(urca)
 library(patchwork)
 
-data <- urcadata <- readRDS("~/Documents/GitHub/PhDEcon107/data/data2.rds")
+data <- readRDS("~/Documents/GitHub/PhDEcon107/data/data2.rds")
 
 reds <- c("#FFCCCC", "#FF6666", "#FF0000", "#CC0000", "#990000", "#660000")
 
@@ -288,3 +288,4 @@ plotProb(models_list[["norm_yiyanghkust_lag_3"]], which = 1)
 plotProb(models_list[["norm_yiyanghkust_lag_3"]], which = 2)
 
 
+plotProb(models_list[["weighted_sentiment_finbert_lag_3_std"]], which = 2)

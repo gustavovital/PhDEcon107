@@ -9,7 +9,7 @@ sentiment_vars <- setdiff(sentiment_vars, "icc")
 
 print(sentiment_vars)
 
-run_granger_test <- function(data, sentiment_var, icc_var = "icc", max_lag = 4) {
+  run_granger_test <- function(data, sentiment_var, icc_var = "icc", max_lag = 4) {
   
   # Selecionar apenas ICC e a variável de sentimento
   df <- data[, c(icc_var, sentiment_var)]

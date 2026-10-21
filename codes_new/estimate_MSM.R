@@ -43,8 +43,8 @@ for (sentiment_var in sentiment_vars) {
     })
     
     print(paste("Formula:", formula_model))
-    print("============= MODEL P0 ================")
-    summary(ms_model_p0)
+    # print("============= MODEL P0 ================")
+    # summary(ms_model_p0)
     
     # MSM com p = 1
     ms_model_p1 <- tryCatch({
@@ -56,8 +56,8 @@ for (sentiment_var in sentiment_vars) {
       return(NULL)
     })
     
-    # print("============= MODEL P1 ================")
-    # summary(ms_model_p1)
+    print("============= MODEL P1 ================")
+    summary(ms_model_p1)
     
     models_list[[model_name]] <- ms_model_p0
     models_list_p1[[model_name]] <- ms_model_p1

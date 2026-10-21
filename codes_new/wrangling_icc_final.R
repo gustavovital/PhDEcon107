@@ -1,0 +1,93 @@
+# Packages
+library(tidyverse)
+library(lubridate)
+library(corrplot)
+library(vars)
+library(MSwM)
+library(zoo)
+library(xtable)
+
+setwd("~/GitHub/PhDEcon107/codes/")
+sentiment_scored_aggregated_full <- read_csv("~/GitHub/PhDEcon107/sentiment_scored_aggregated_full_final.csv")
+# sentiment_scored_aggregated <- read.csv("~/Documents/GitHub/PhDEcon107/data/sentiment_scored_aggregated.csv")
+
+# missing_2021_dates <- sentiment_scored_aggregated %>%
+#   filter(format(DATE, "%Y") == "2021") %>%
+#   anti_join(
+#     sentiment_scored_aggregated_full,
+#     by = "DATE"
+#   )
+
+# sentiment_scored_aggregated_full_teste <- bind_rows(
+#   sentiment_scored_aggregated_full,
+#   missing_2021_dates
+# ) %>%
+#   arrange(DATE)
+
+
+icc <- read_delim("GitHub/PhDEcon107/data_new/icc.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+names(icc)<- c('DATE', 'icc')
+
+icc$DATE <- as.Date(paste0(icc$DATE, "-01"))       
+icc$icc  <- as.numeric(gsub(",", ".", icc$icc)) 
+
+# icc <- icc %>%
+#   mutate(DATE = floor_date(as.Date(DATE), unit = "month"))
+
+sentiment_scored_aggregated_full$DATE <- as.Date(sentiment_scored_aggregated_full$DATE)
+
+# wrangling
+data <- sentiment_scored_aggregated_full %>%
+  mutate(DATE = floor_date(DATE, unit = "month")) %>%
+  group_by(DATE) %>%
+  summarise(
+    weighted_sentiment_finbert = sum(sentiment_finbert * LEN, na.rm = TRUE) / sum(LEN, na.rm = TRUE),
+    weighted_sentiment_yiyanghkust = sum(sentiment_yiyanghkust * LEN, na.rm = TRUE) / sum(LEN, na.rm = TRUE),
+    total_length = sum(LEN, na.rm = TRUE),
+    n_docs = n()
+  ) %>%
+  ungroup() %>%
+  mutate(
+    norm_finbert = (weighted_sentiment_finbert - min(weighted_sentiment_finbert, na.rm = TRUE)) /
+      (max(weighted_sentiment_finbert, na.rm = TRUE) - min(weighted_sentiment_finbert, na.rm = TRUE)),
+    norm_yiyanghkust = (weighted_sentiment_yiyanghkust - min(weighted_sentiment_yiyanghkust, na.rm = TRUE)) /
+      (max(weighted_sentiment_yiyanghkust, na.rm = TRUE) - min(weighted_sentiment_yiyanghkust, na.rm = TRUE)),
+    mean_weighted_sentiment = (weighted_sentiment_finbert + weighted_sentiment_yiyanghkust) / 2,
+    norm_mean_sentiment = (mean_weighted_sentiment - min(mean_weighted_sentiment, na.rm = TRUE)) /
+      (max(mean_weighted_sentiment, na.rm = TRUE) - min(mean_weighted_sentiment, na.rm = TRUE))
+  )
+
+data$DATE <- as.Date(data$DATE)
+icc$DATE <- as.Date(icc$DATE)
+
+data <- left_join(data, icc, by = "DATE")
+
+for (i in 2:6) {
+  new_colname <- paste0(names(data)[2], "_", i)
+  new_colname2 <- paste0(names(data)[3], "_", i)
+  new_colname6 <- paste0(names(data)[6], "_", i)
+  new_colname7 <- paste0(names(data)[7], "_", i)
+  new_colname8 <- paste0(names(data)[9], "_", i)
+  data[[new_colname]] <- zoo::rollmean(data$weighted_sentiment_finbert, k = i, fill = NA, align = "right")
+  data[[new_colname2]] <- zoo::rollmean(data$weighted_sentiment_yiyanghkust, k = i, fill = NA, align = "right")
+  data[[new_colname6]] <- zoo::rollmean(data$norm_finbert, k = i, fill = NA, align = "right")
+  data[[new_colname7]] <- zoo::rollmean(data$norm_yiyanghkust, k = i, fill = NA, align = "right")
+  data[[new_colname8]] <- zoo::rollmean(data$norm_mean_sentiment, k = i, fill = NA, align = "right")
+}
+
+data2 <- data %>%
+  # filter(DATE < as.Date('2025-01-01') & DATE >= as.Date('2020-01-01')) %>% 
+  mutate(covid = ifelse(DATE < as.Date('2021-07-01') & DATE > as.Date('2020-03-01'), 1, 0)) %>% 
+  na.omit() 
+
+data2 <- data2 %>% 
+  mutate(
+    icc = as.numeric(sub(",", ".", icc, fixed = TRUE))
+  )
+
+# data2$icc_diff <- c(NA, diff(data2$icc))
+
+saveRDS(data, 'C:/Users/gusta/Documents/GitHub/PhDEcon107/data/data_new_final.rds')
+saveRDS(data2, 'C:/Users/gusta/Documents/GitHub/PhDEcon107/data/data2_new_final.rds')
+
+rm(list = ls())

@@ -7,7 +7,7 @@ data <- data2_new # %>%
 data <- sent_all %>% 
   filter(DATE >= as.Date('2010-01-01'))
 
-sentiment_vars <- c("norm_finbert", "norm_yiyanghkust", "norm_lm_sentiment")
+sentiment_vars <- c("weighted_sentiment_finbert", "weighted_sentiment_yiyanghkust", "weighted_lm_sentiment")
 rolling_means <- 2:6
 
 models_list <- list()
